@@ -15,6 +15,8 @@ class App extends React.Component {
             attributes: [],
             links: [],
         };
+        this.onCreate = this.onCreate.bind(this);
+        this.onNavigate = this.onNavigate.bind(this);
     }
 
     onCreate(newEmployee) {
@@ -89,6 +91,14 @@ class App extends React.Component {
 }
 
 class EmployeeList extends React.Component{
+
+    constructor(props) {
+        super(props);
+        this.handleNavFirst = this.handleNavFirst.bind(this);
+        this.handleNavPrev = this.handleNavPrev.bind(this);
+        this.handleNavNext = this.handleNavNext.bind(this);
+        this.handleNavLast = this.handleNavLast.bind(this);
+    }
 
     handleNavFirst(e) {
         e.preventDefault();
