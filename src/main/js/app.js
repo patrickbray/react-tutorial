@@ -1,9 +1,8 @@
 const React = require('react');
-const ReactDOM = require('react-dom')
+const ReactDOM = require('react-dom');
 const client = require('./client');
 const follow = require('./follow');
-
-var stompClient = require('./websocket-listener')
+const stompClient = require('./websocket-listener');
 
 const root = '/api';
 
@@ -136,15 +135,32 @@ class App extends React.Component {
     }
 
     render() {
+
+        var createLinkStyle = {
+            float: 'right'
+        };
+
         return (
             <div>
                 <CreateDialog attributes={this.state.attributes} onCreate={this.onCreate}/>
-                <EmployeeList
-                    employees={this.state.employees}
-                    onNavigate={this.onNavigate}
-                    links={this.state.links}
-                    onDelete={this.onDelete}
-                    />
+                <div className="panel panel-default">
+                    <div className="panel-heading">
+                        <h3 className="panel-title">
+                            Employees
+                            <div style={createLinkStyle}>
+                                <a href="#createEmployee">Create</a>
+                            </div>
+                        </h3>
+                    </div>
+                    <div className="panel-body">
+                        <EmployeeList
+                            employees={this.state.employees}
+                            onNavigate={this.onNavigate}
+                            links={this.state.links}
+                            onDelete={this.onDelete}
+                        />
+                    </div>
+                </div>
             </div>
         )
     }
@@ -181,11 +197,11 @@ class EmployeeList extends React.Component{
     }
 
     render() {
-        var employees = this.props.employees.map(employee =>
+        let employees = this.props.employees.map(employee =>
             <Employee key={employee._links.self.href} employee={employee} onDelete={this.props.onDelete} />
         );
 
-        var navLinks = [];
+        let navLinks = [];
         if ("first" in this.props.links) {
             navLinks.push(<button key="first" onClick={this.handleNavFirst}>&lt;&lt;</button>);
         }
@@ -201,12 +217,13 @@ class EmployeeList extends React.Component{
 
         return (
             <div>
-                <table>
+                <table className="table table-striped">
                     <tbody>
                     <tr>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Description</th>
+                        <th>Actions</th>
                     </tr>
                     {employees}
                     </tbody>
@@ -237,7 +254,7 @@ class Employee extends React.Component{
                 <td>{this.props.employee.lastName}</td>
                 <td>{this.props.employee.description}</td>
                 <td>
-                    <button onClick={this.handleDelete}>Delete</button>
+                    <button onClick={this.handleDelete} className="btn btn-lg btn-danger">Delete</button>
                 </td>
             </tr>
         )
@@ -253,7 +270,7 @@ class CreateDialog extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        var newEmployee = {};
+        let newEmployee = {};
         this.props.attributes.forEach(attribute => {
             newEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
         });
@@ -269,7 +286,7 @@ class CreateDialog extends React.Component {
     }
 
     render() {
-        var inputs = this.props.attributes.map(attribute =>
+        let inputs = this.props.attributes.map(attribute =>
             <p key={attribute}>
                 <input type="text" placeholder={attribute} ref={attribute} className="field" />
             </p>
@@ -277,14 +294,10 @@ class CreateDialog extends React.Component {
 
         return (
             <div>
-                <a href="#createEmployee">Create</a>
-
                 <div id="createEmployee" className="modalDialog">
                     <div>
                         <a href="#" title="Close" className="close">X</a>
-
                         <h2>Create new employee</h2>
-
                         <form>
                             {inputs}
                             <button onClick={this.handleSubmit}>Create</button>
