@@ -17,6 +17,13 @@ class App extends React.Component {
         };
         this.onCreate = this.onCreate.bind(this);
         this.onNavigate = this.onNavigate.bind(this);
+        this.onDelete = this.onDelete.bind(this);
+    }
+
+    onDelete(employee) {
+        client({method: 'DELETE', path: employee._links.self.href}).done(response => {
+            this.loadFromServer(this.state.pageSize);
+        });
     }
 
     onCreate(newEmployee) {
@@ -84,6 +91,7 @@ class App extends React.Component {
                     employees={this.state.employees}
                     onNavigate={this.onNavigate}
                     links={this.state.links}
+                    onDelete={this.onDelete}
                     />
             </div>
         )
@@ -122,7 +130,7 @@ class EmployeeList extends React.Component{
 
     render() {
         var employees = this.props.employees.map(employee =>
-            <Employee key={employee._links.self.href} employee={employee}/>
+            <Employee key={employee._links.self.href} employee={employee} onDelete={this.props.onDelete} />
         );
 
         var navLinks = [];
@@ -160,12 +168,25 @@ class EmployeeList extends React.Component{
 }
 
 class Employee extends React.Component{
+
+    constructor(props) {
+        super(props);
+        this.handleDelete = this.handleDelete.bind(this);
+    }
+
+    handleDelete() {
+        this.props.onDelete(this.props.employee);
+    }
+
     render() {
         return (
             <tr>
                 <td>{this.props.employee.firstName}</td>
                 <td>{this.props.employee.lastName}</td>
                 <td>{this.props.employee.description}</td>
+                <td>
+                    <button onClick={this.handleDelete}>Delete</button>
+                </td>
             </tr>
         )
     }
